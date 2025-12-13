@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}Página Inicial{% endblock %}
+
+{% block content %}
+    <h2 class="text-2xl mb-6 text-center text-gray-300">Selecione o motivo da sua catástrofe pessoal.</h2>
+    
+    <form action="/gerar" method="POST" id="form-desculpa" class="bg-gray-800 p-8 rounded-xl shadow-2xl border border-purple-700">
+        
+        <label for="motivo-select" class="block text-xl font-medium text-purple-300 mb-3">
+            O que você precisa desesperadamente desculpar?
+        </label>
+        
+        <select id="motivo-select" name="motivo" required
+                class="w-full p-4 border border-gray-600 bg-gray-700 text-white rounded-lg focus:ring-pink-500 focus:border-pink-500 text-lg">
+            <option value="" disabled selected>Escolha um Motivo...</option>
+            <option value="Atraso no trabalho ou compromisso">Atraso no trabalho ou compromisso</option>
+            <option value="Comi o último pedaço de bolo">Comi o último pedaço de bolo</option>
+            <option value="Quebrei um objeto de valor sentimental">Quebrei um objeto de valor sentimental</option>
+            <option value="Não respondi a mensagem por 3 dias">Não respondi a mensagem por 3 dias</option>
+            <option value="Outro (Especifique)">Outro (Especifique - a IA se vira!)</option>
+        </select>
+        
+        <button type="submit" 
+                class="mt-6 w-full bg-pink-600 text-white p-4 rounded-lg text-xl font-bold 
+                       hover:bg-pink-700 transition duration-300 transform hover:scale-105">
+            Gerar Desculpa Cósmica 🪐
+        </button>
+        
+        <div id="loading-spinner" class="mt-4 text-center hidden">
+            <p class="text-purple-400">A IA está consultando o espaço-tempo...</p>
+            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-400 mx-auto mt-2"></div>
+        </div>
+        
+    </form>
+    
+    <div class="text-center mt-6">
+        <a href="/historico" class="text-gray-400 hover:text-purple-400 transition">Ver Histórico de Desculpas</a>
+    </div>
+
+{% endblock %}

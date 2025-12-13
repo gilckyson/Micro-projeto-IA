@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block title %}Resultado da Desculpa{% endblock %}
+
+{% block content %}
+    <h2 class="text-3xl font-bold mb-6 text-center text-purple-400">Desculpa Gerada com Sucesso!</h2>
+    
+    <div class="bg-gray-800 p-8 rounded-xl shadow-2xl border border-pink-700">
+        
+        <h3 class="text-xl font-semibold text-gray-400 mb-2">Motivo Original:</h3>
+        <p class="text-lg text-white mb-6 p-3 bg-gray-700 rounded">{{ desculpa.motivo }}</p>
+        
+        <h3 class="text-xl font-semibold text-purple-300 mb-2">A Desculpa Cósmica:</h3>
+        <p class="text-2xl text-white whitespace-pre-wrap leading-relaxed border-l-4 border-pink-500 pl-4 py-2 mb-6">
+            {{ desculpa.conteudo }}
+        </p>
+        
+        <h3 class="text-2xl font-extrabold text-center mt-8 p-3 rounded-lg border border-purple-500">
+            {{ desculpa.calcular_pontuacao_drama() }}
+        </h3>
+        
+    </div>
+
+    <div class="text-center mt-8">
+        <a href="/" class="text-lg text-pink-400 hover:text-pink-300 transition block mb-4">
+            ⬅️ Gerar uma nova desculpa (Se sobrevivermos!)
+        </a>
+        <a href="/historico" class="text-gray-400 hover:text-purple-400 transition">
+            Ver Histórico de Desculpas
+        </a>
+    </div>
+{% endblock %}

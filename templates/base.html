@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Gerador de Desculpas | {{ titulo }}{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-900 text-white min-h-screen p-4">
+    <header class="text-center py-6 bg-gray-800 shadow-lg mb-8">
+        <h1 class="text-4xl font-extrabold text-purple-400">{{ titulo }}</h1>
+        <p class="text-sm text-gray-400">Piores Desculpas Dramáticas do Cenário</p>
+    </header>
+    <main class="container mx-auto max-w-4xl">
+        {% block content %}
+        {% endblock %}
+    </main>
+    <footer class="text-center mt-10 text-gray-500 text-xs">
+        Desenvolvido com FastAPI e Gemini API 🚀
+    </footer>
+</body>
+</html>
