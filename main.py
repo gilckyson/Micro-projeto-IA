@@ -1,31 +1,25 @@
-# main.py
-
-# --- IMPORTS OBRIGATÓRIOS E AUXILIARES ---
+# --- IMPORTS ---
 from fastapi import FastAPI, Request, HTTPException, Form 
 from fastapi.templating import Jinja2Templates
-from pydantic import BaseModel
-import requests # Requisito: Usar biblioteca requests para chamar API 
+import requests
 import os
-from dotenv import load_dotenv # Para ler o arquivo .env
-import json # Usado para formatar o JSON do print em debug
+from dotenv import load_dotenv
 
-# Carrega a chave da API do arquivo .env
+# Carrega a chave do .env
 load_dotenv()
-# VÁLIDO: Busca o valor da variável de ambiente que tem o NOME "GEMINI_KEY"
-GEMINI_KEY = os.getenv("GEMINI_KEY") # <--- CORREÇÃO CRÍTICA AQUI!
+GEMINI_KEY = os.getenv("GEMINI_KEY") 
+# print(f"VALOR DA CHAVE LIDA: ->{GEMINI_KEY}<-") # Linha de debug opcional
 
 # --- CONSTANTES GLOBAIS ---
 GEMINI_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent"
-TIMEOUT_SECS = 30 # Requisito: Implementar timeout de 30 segundos 
-db_historico = [] # Lista simples para simular um "banco de dados" de histórico
+TIMEOUT_SECS = 30
+db_historico = [] 
 
-# --- 1. POO (Orientação a Objetos) ---
-# Requisito: Criar pelo menos 1 classe que represente algo do projeto
+# --- POO (Orientação a Objetos) ---
 class Desculpa:
     """Representa uma desculpa dramática gerada pelo sistema."""
     
     def __init__(self, motivo: str, conteudo: str):
-        # Atributos (dados da desculpa)
         self.motivo = motivo
         self.conteudo = conteudo
         self.caracteres = len(conteudo)
@@ -44,8 +38,7 @@ app = FastAPI(title="Gerador de Desculpas Dramáticas")
 templates = Jinja2Templates(directory="templates")
 
 
-# --- 2. ROTA GET / (Página Inicial) ---
-# Requisito: 1 rota para página inicial (GET)
+# --- ROTA GET / (Página Inicial) ---
 @app.get("/", tags=["Rotas Principais"])
 def home(request: Request):
     """Rota para a página inicial com o formulário de seleção."""
@@ -55,84 +48,66 @@ def home(request: Request):
     )
 
 
-# --- 3. ROTA POST /gerar (Processamento da IA) ---
-# Requisito: 1 rota para processar entrada do usuário (POST /processar)
+# --- ROTA POST /gerar (Processamento da IA) ---
 @app.post("/gerar", tags=["Rotas Principais"])
-# CORREÇÃO: Recebe o 'motivo' como dado de formulário (Form)
 def gerar_desculpa(request: Request, motivo: str = Form(...)): 
     """Recebe o motivo do usuário, chama a Gemini API e retorna o resultado."""
     
-    
-    # O Prompt (A "Receita" para a IA, responsabilidade P3)
     prompt_ia = f"""
-    [1. CONTEXTO Quem a IA deve ser]
-    Você é um dramaturgo esquizofrênico e mestre na arte da desculpa extrema.
-    [2. TAREFA O que fazer]
-    Gere uma única desculpa com no mínimo 50 palavras, transformando o motivo abaixo em uma anomalia cósmica ou uma conspiração de alto drama.
-    [3. RESTRIÇÕES Regras a seguir]
-    - NUNCA use a palavra "eu" ou "meu".
-    - A desculpa deve ser longa e culpar forças externas ou efeitos borboleta.
-    - Comece a desculpa diretamente, sem introduções.
-    [4. INPUT Dados do usuário]
-    Motivo da Desculpa: {motivo}
+    [1. CONTEXTO] Você é um dramaturgo esquizofrênico e mestre na arte da desculpa extrema.
+    [2. TAREFA] Gere uma única desculpa com no mínimo 50 palavras, transformando o motivo abaixo em uma anomalia cósmica ou uma conspiração de alto drama.
+    [3. RESTRIÇÕES] NUNCA use a palavra "eu" ou "meu". A desculpa deve ser longa e culpar forças externas. Comece a desculpa diretamente.
+    [4. INPUT] Motivo da Desculpa: {motivo}
     """
     
     headers = {"Content-Type": "application/json"}
     params = {"key": GEMINI_KEY}
     json_data = {
         "contents": [{"parts": [{"text": prompt_ia}]}],
-        # Temperatura alta (0.9) para máxima criatividade
         "config": {"temperature": 0.9} 
     }
     
     try:
-        # Chama a API do Gemini com a biblioteca requests
+        # Chama a API do Gemini com timeout
         response = requests.post(
             GEMINI_URL, 
             headers=headers, 
             params=params, 
             json=json_data, 
-            timeout=TIMEOUT_SECS # Aplicação do Timeout 
+            timeout=TIMEOUT_SECS
         )
-        response.raise_for_status() # Lança exceção para erros HTTP (4xx/5xx)
+        response.raise_for_status() # Lança exceção para erros HTTP
         
-        # Pega o texto da resposta
         data = response.json()
         texto_desculpa = data['candidates'][0]['content']['parts'][0]['text']
         
-        # Cria o objeto Desculpa (Usando POO para armazenar e processar)
+        # Cria o objeto Desculpa e adiciona ao histórico
         nova_desculpa = Desculpa(motivo, texto_desculpa)
-        
-        # Adiciona ao histórico (para a Rota 3)
         db_historico.append(nova_desculpa)
         
-        # Requisito: Passar dados do backend (o objeto Desculpa) para o frontend 
         return templates.TemplateResponse(
             "resultado.html",
             {"request": request, "titulo": "Desculpa Gerada", "desculpa": nova_desculpa}
         )
 
     except requests.exceptions.Timeout:
-        # Tratamento de erro: Timeout 
         raise HTTPException(
             status_code=504, 
-            detail="A IA demorou muito para processar a desculpa (Timeout de 30s excedido). Tente um motivo mais simples."
+            detail="A IA demorou muito para processar a desculpa (Timeout excedido)."
         )
     except requests.exceptions.RequestException as e:
-        # Tratamento de erro: Conexão, 4xx, 5xx, etc. 
+        # Tratamento de erro: Conexão, 4xx (como a chave inválida), 5xx
         status_code = response.status_code if 'response' in locals() else 500
         raise HTTPException(
             status_code=status_code, 
-            detail=f"Erro na comunicação com a API Gemini (Código: {status_code}). Verifique a chave ou o limite de uso. Detalhe: {e}"
+            detail=f"Erro na comunicação com a API Gemini (Código: {status_code}). Detalhe: {e}"
         )
 
 
-# --- 4. ROTA GET /historico (Rota Adicional) ---
-# Requisito: 1 rota adicional de sua escolha (ex: histórico)
+# --- ROTA GET /historico (Rota Adicional) ---
 @app.get("/historico", tags=["Rotas Adicionais"])
 def ver_historico(request: Request):
     """Exibe uma lista de todas as desculpas geradas e salvas."""
-    # Passa a lista de objetos Desculpa para o template
     return templates.TemplateResponse(
         "historico.html",
         {"request": request, "titulo": "Histórico de Desculpas", "historico": db_historico}
