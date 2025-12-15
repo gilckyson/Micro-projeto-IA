@@ -3,30 +3,36 @@
 {% block title %}Histórico de Desculpas{% endblock %}
 
 {% block content %}
-    <h2 class="text-3xl font-bold mb-6 text-center text-purple-400">Histórico de Desculpas Cósmicas</h2>
+    <h2 class="text-3xl font-bold mb-8 text-center text-purple-400">📜 Histórico de Desculpas Cósmicas ({{ historico|length }} salvas)</h2>
     
     {% if historico %}
-        {% for desculpa in historico %}
-        <div class="bg-gray-800 p-6 rounded-xl shadow-lg mb-6 border border-gray-700">
-            <h3 class="text-xl font-semibold text-pink-400 mb-1">Motivo: {{ desculpa.motivo }}</h3>
-            <p class="text-gray-300 mb-3 text-sm">Tamanho: {{ desculpa.caracteres }} caracteres</p>
-            <p class="text-lg text-white italic border-l-2 border-purple-500 pl-3">
-                {{ desculpa.conteudo | truncate(150, true) }}
-            </p>
-            <p class="text-sm font-bold text-center mt-4 text-purple-300">
-                {{ desculpa.calcular_pontuacao_drama() }}
-            </p>
+        <div class="space-y-6">
+            {% for desculpa in historico | reverse %}
+                <div class="bg-gray-800 p-6 rounded-xl shadow-xl border border-gray-700 hover:border-pink-500 transition duration-300">
+                    
+                    <div class="flex justify-between items-center mb-3">
+                        <h3 class="text-xl font-semibold text-pink-400">Motivo: {{ desculpa.motivo }}</h3>
+                        <span class="text-sm font-extrabold text-purple-400 p-1 rounded bg-gray-700">
+                            {{ desculpa.calcular_pontuacao_drama() }}
+                        </span>
+                    </div>
+
+                    <p class="text-lg text-gray-300 whitespace-pre-wrap leading-snug border-l-2 border-gray-600 pl-3 py-1">
+                        {{ desculpa.conteudo | truncate(150, true) }}
+                    </p>
+                    
+                </div>
+            {% endfor %}
         </div>
-        {% endfor %}
     {% else %}
-        <div class="text-center p-10 bg-gray-800 rounded-lg">
-            <p class="text-xl text-gray-400">Ainda não há nenhuma desculpa registrada. Crie a primeira!</p>
+        <div class="text-center p-10 bg-gray-800 rounded-lg shadow-inner">
+            <p class="text-xl text-gray-500">Ainda não há desculpas salvas. Gere a primeira!</p>
         </div>
     {% endif %}
 
-    <div class="text-center mt-8">
+    <div class="text-center mt-10">
         <a href="/" class="text-lg text-pink-400 hover:text-pink-300 transition">
-            ⬅️ Voltar para a Página Inicial
+            ⬅️ Voltar para a Geração
         </a>
     </div>
 {% endblock %}

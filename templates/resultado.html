@@ -11,13 +11,36 @@
         <p class="text-lg text-white mb-6 p-3 bg-gray-700 rounded">{{ desculpa.motivo }}</p>
         
         <h3 class="text-xl font-semibold text-purple-300 mb-2">A Desculpa Cósmica:</h3>
-        <p class="text-2xl text-white whitespace-pre-wrap leading-relaxed border-l-4 border-pink-500 pl-4 py-2 mb-6">
+        <p id="excuse-content" class="text-2xl text-white whitespace-pre-wrap leading-relaxed border-l-4 border-pink-500 pl-4 py-2 mb-6">
             {{ desculpa.conteudo }}
         </p>
         
-        <h3 class="text-2xl font-extrabold text-center mt-8 p-3 rounded-lg border border-purple-500">
+        <h3 id="drama-score" class="text-2xl font-extrabold text-center mt-8 p-3 rounded-lg border border-purple-500">
             {{ desculpa.calcular_pontuacao_drama() }}
         </h3>
+        
+        {# NOVO BLOCO DE COMPARTILHAMENTO #}
+        <div class="mt-8 pt-4 border-t border-gray-700">
+            <h4 class="text-lg font-semibold text-gray-400 mb-4 text-center">Compartilhe sua Desgraça Cósmica:</h4>
+            
+            <div class="flex justify-center space-x-4">
+                
+                <button id="copy-button" type="button" 
+                        class="flex items-center bg-gray-700 text-white px-4 py-2 rounded-lg text-lg font-bold hover:bg-gray-600 transition">
+                    <span id="copy-text">📋 Copiar Texto</span>
+                </button>
+                
+                <a id="whatsapp-share" target="_blank" rel="noopener noreferrer"
+                   class="flex items-center bg-green-600 text-white px-4 py-2 rounded-lg text-lg font-bold hover:bg-green-700 transition">
+                    <span class="mr-2">🟢</span> WhatsApp
+                </a>
+                
+                <a id="twitter-share" target="_blank" rel="noopener noreferrer"
+                   class="flex items-center bg-blue-500 text-white px-4 py-2 rounded-lg text-lg font-bold hover:bg-blue-600 transition">
+                    <span class="mr-2">🐦</span> Twitter
+                </a>
+            </div>
+        </div>
         
     </div>
 
@@ -29,4 +52,52 @@
             Ver Histórico de Desculpas
         </a>
     </div>
+{% endblock %}
+
+{# NOVO BLOCO DE SCRIPTS #}
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const excuseContent = document.getElementById('excuse-content').innerText.trim();
+        const dramaScore = document.getElementById('drama-score').innerText.trim();
+        const copyButton = document.getElementById('copy-button');
+        const copyTextSpan = document.getElementById('copy-text');
+        const whatsappLink = document.getElementById('whatsapp-share');
+        const twitterLink = document.getElementById('twitter-share');
+
+        // Cria a mensagem de compartilhamento (com a quebra de linha tratada)
+        const shareMessage = 
+`Minha nova desculpa dramática é:
+${excuseContent}
+
+Avaliação: ${dramaScore}
+
+Gere a sua em: [Link do Projeto Aqui] #GeradorDeDesculpasCosmicas`;
+        
+        // 1. Lógica do Botão COPIAR
+        copyButton.addEventListener('click', async () => {
+            try {
+                await navigator.clipboard.writeText(shareMessage);
+                
+                // Feedback visual
+                copyTextSpan.innerText = '✅ Copiado!';
+                setTimeout(() => {
+                    copyTextSpan.innerText = '📋 Copiar Texto';
+                }, 2000);
+            } catch (err) {
+                console.error('Falha ao copiar:', err);
+                copyTextSpan.innerText = '❌ Erro ao Copiar';
+            }
+        });
+
+        // 2. Lógica do Botão WHATSAPP
+        const whatsappURL = `https://api.whatsapp.com/send?text=${encodeURIComponent(shareMessage)}`;
+        whatsappLink.href = whatsappURL;
+
+        // 3. Lógica do Botão TWITTER (X)
+        const twitterURL = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareMessage)}`;
+        twitterLink.href = twitterURL;
+
+    });
+</script>
 {% endblock %}
