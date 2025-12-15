@@ -1,58 +1,39 @@
-{% extends "base.html" %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerador de Desculpas - Versão 1</title>
+</head>
+<body class="bg-gray-900 text-gray-100 min-h-screen flex flex-col items-center justify-center">
 
-{% block title %}Gerador de Desculpas Dramáticas{% endblock %}
-
-{% block content %}
-<div class="container mx-auto px-10 py-8 max-w-3xl bg-gray-800 rounded-xl shadow-2xl border-purple-700 border-2 mt-10 mb-8"> 
-    
-    <h1 class="text-3xl font-extrabold text-center text-pink-400 mb-6">
-        Gerador de Desculpas Cósmicas
-    </h1>
-    
-    <p class="text-gray-300 text-center mb-8">
-        Seja específico(a): digite sua situação para que a IA crie uma desculpa épica.
-    </p>
-
-    <form method="post" action="/gerar" class="space-y-6">
+    <div class="bg-gray-800 p-8 rounded-xl shadow-2xl w-full max-w-lg">
+        <h1 class="text-3xl font-bold mb-6 text-center text-red-400">Gerador de Desculpas Cômicas (V1)</h1>
         
-        <div class="space-y-2">
-            
-            <label for="motivo" class="block text-xl font-medium text-gray-300 mb-2">
-                O que você precisa desesperadamente desculpar?
+        <form method="post" action="/gerar">
+            <label for="motivo" class="block text-lg font-medium mb-2 text-gray-300">
+                Selecione o motivo da sua ausência/atraso:
             </label>
             
-            <input 
-                type="text" 
-                id="motivo" 
+            <select 
                 name="motivo" 
-                placeholder="Ex: Perdi o prazo porque a gravidade do meu quarto mudou." 
+                id="motivo" 
                 required 
-                
-                class="w-full p-4 text-gray-100 bg-gray-700 border-2 border-gray-600 rounded-lg shadow-inner 
-                       focus:ring-pink-500 focus:border-pink-500 transition duration-150 text-base"
+                class="w-full p-3 mb-6 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 text-white"
             >
-        </div>
-        
-        <button type="submit" class="w-full py-3 bg-pink-600 hover:bg-pink-700 text-white font-bold rounded-lg transition duration-200 shadow-md hover:shadow-xl transform hover:scale-[1.01]">
-            Gerar Desculpa Cósmica 🚀
-        </button>
-    </form>
-    
+                <option value="Atraso para a reunião de grupo">Atraso para a reunião de grupo</option>
+                <option value="Não entregou o trabalho final">Não entregou o trabalho final</option>
+                <option value="Faltou ao compromisso importante">Faltou ao compromisso importante</option>
+                <option value="Quebrou algo que não devia">Quebrou algo que não devia</option>
+            </select>
+            
+            <button 
+                type="submit"
+                class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-4 rounded-lg transition duration-300 transform hover:scale-105"
+            >
+                Gerar Desculpa Cósmica
+            </button>
+        </form>
     </div>
-
-<div class="mt-4 text-center">
-    <a href="/historico" class="text-gray-400 hover:text-purple-400 transition font-semibold text-lg">
-        Ver Histórico de Desculpas
-    </a>
-</div>
-
-<div class="container mx-auto max-w-3xl mt-6">
-    <hr class="border-t-2 border-purple-600 opacity-50 mx-auto w-3/4"> 
-    
-    <p class="text-sm text-gray-500 text-center pt-3 pb-8">
-        Use sem Moderação! ;D
-    </p>
-</div>
-
-
-{% endblock %}
+    </body>
+</html>
